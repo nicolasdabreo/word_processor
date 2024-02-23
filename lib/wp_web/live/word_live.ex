@@ -13,7 +13,7 @@ defmodule WPWeb.WordLive do
     if connected?(socket) do
       WP.start_link("")
       WP.EventLog.subscribe()
-      assign(socket, :processed_text, WP.get_state())
+      assign(socket, :processed_text, WP.current_state())
     else
       assign(socket, :processed_text, "")
     end

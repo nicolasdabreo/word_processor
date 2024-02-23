@@ -13,14 +13,26 @@ defmodule WP do
 
   alias WP.EventLog
 
+  @doc """
+  Starts an agent linked to the calling process.
+  """
   def start_link(initial_state) do
     Agent.start_link(fn -> initial_state end, name: __MODULE__)
   end
 
-  def get_state() do
+  @doc """
+  Retrieves the current state of the agent.
+  """
+  @spec current_state() :: String.t()
+  def current_state() do
     Agent.get(__MODULE__, fn current_text -> current_text end)
   end
 
+  @doc """
+  Inserts the given substring at a position in the Word Processor's current state,
+  broadcasting the new state of the Word Processor over PubSub.
+  """
+  @spec insert(integer(), String.t()) :: :ok
   def insert(position, string) do
     {raw_text, processed_text} =
       Agent.get_and_update(__MODULE__, fn current_state ->
@@ -38,6 +50,11 @@ defmodule WP do
     })
   end
 
+  @doc """
+  Deletes all matches of the given substring in the Word Processor's current state,
+  broadcasting the new state of the Word Processor over PubSub.
+  """
+  @spec delete(String.t()) :: :ok
   def delete(text_to_delete) do
     {raw_text, processed_text} =
       Agent.get_and_update(__MODULE__, fn current_state ->
@@ -52,6 +69,12 @@ defmodule WP do
     })
   end
 
+  @doc """
+  Replaces all matches of the given substring in the Word Processor's current state
+  with a second substring, broadcasting the new state of the Word Processor over
+  PubSub.
+  """
+  @spec replace(String.t(), String.t()) :: :ok
   def replace(substring, replacement_text) do
     {raw_text, processed_text} =
       Agent.get_and_update(__MODULE__, fn current_state ->
@@ -67,6 +90,11 @@ defmodule WP do
     })
   end
 
+  @doc """
+  Searches for the given substring in the Word Processor's current state, the
+  success/failure of a given search is broadcast over PubSub.
+  """
+  @spec search(String.t()) :: :ok
   def search(substring) do
     {current_text, result} =
       Agent.get(__MODULE__, fn current_state ->
