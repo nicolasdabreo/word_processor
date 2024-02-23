@@ -713,7 +713,7 @@ defmodule WPWeb.CoreComponents do
     """
   end
 
-  defp truncate_event_struct(struct), do: struct |> Module.split() |> List.last() |> IO.inspect()
+  defp truncate_event_struct(struct), do: struct |> Module.split() |> List.last()
   defp render_bool(true), do: "✅"
   defp render_bool(false), do: "❌"
 end
