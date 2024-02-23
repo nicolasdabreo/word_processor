@@ -1,0 +1,82 @@
+<.header>
+  Word Processor Challenge
+  <:subtitle>
+    Welcome! You can change the text edit modes to change the type of action you can take. Vim motions coming soon™
+  </:subtitle>
+</.header>
+
+<div class="pt-10">
+  <label class="block text-sm font-semibold leading-6 text-zinc-800">
+    Processed text
+  </label>
+  <textarea
+    id="processed_text"
+    name="processed_text"
+    class={[
+      "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
+      "min-h-[6rem] border-zinc-300 focus:border-zinc-400 bg-zinc-100 cursor-not-allowed"
+    ]}
+    value={@processed_text}
+    disabled
+  >
+      <%= @processed_text %>
+    </textarea>
+</div>
+
+<.simple_form for={@mode_form} id="mode-form" phx-change="change-mode" class="w-32">
+  <.input
+    type="select"
+    value={@mode}
+    field={@mode_form[:mode]}
+    label="Text edit mode"
+    options={[
+      {"Insert", "insert"},
+      {"Replace", "replace"},
+      {"Delete", "delete"},
+      {"Search", "search"}
+    ]}
+  />
+</.simple_form>
+
+<.simple_form for={@form} id="my-form" phx-submit="submit" class="pb-6">
+  <div class="grid grid-cols-4 gap-4">
+    <%= case @mode do %>
+      <% :insert -> %>
+        <div class="col-span-3">
+          <.input field={@form[:prompt]} type="text" label="Text to insert" />
+        </div>
+        <div class="col-span-1">
+          <.input field={@form[:position]} type="number" label="Position" value="0" />
+        </div>
+        <.button class="mt-auto" type="submit" name="submit" value="insert">
+          Insert
+        </.button>
+      <% :replace -> %>
+        <div class="col-span-2">
+          <.input field={@form[:prompt]} type="text" label="Text to find" />
+        </div>
+        <div class="col-span-2">
+          <.input field={@form[:replace]} type="text" label="Text to replace" required />
+        </div>
+        <.button class="mt-auto" type="submit" name="submit" value="replace">
+          Replace
+        </.button>
+      <% :delete -> %>
+        <div class="col-span-4">
+          <.input field={@form[:prompt]} type="text" label="Text to delete" />
+        </div>
+        <.button class="mt-auto" type="submit" name="submit" value="delete">
+          Delete
+        </.button>
+      <% :search -> %>
+        <div class="col-span-4">
+          <.input field={@form[:prompt]} type="text" label="Text to search" />
+        </div>
+        <.button class="mt-auto" type="submit" name="submit" value="search">
+          Search
+        </.button>
+    <% end %>
+  </div>
+</.simple_form>
+
+<.event_log stream={@streams.event_log} stream_length={@log_length} />

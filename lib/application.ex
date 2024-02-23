@@ -14,7 +14,9 @@ defmodule WP.Application do
       # Start a worker by calling: WP.Worker.start_link(arg)
       # {WP.Worker, arg},
       # Start to serve requests, typically the last entry
-      WPWeb.Endpoint
+      WPWeb.Endpoint,
+      # Start our Word Processor agent
+      {WP, ""}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -17,7 +17,7 @@ defmodule WPWeb.Router do
   scope "/", WPWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", WordLive, :home
   end
 
   # Other scopes may use custom stacks.
