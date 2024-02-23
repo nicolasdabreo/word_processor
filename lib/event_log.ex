@@ -1,6 +1,7 @@
 defmodule WP.EventLog do
   @moduledoc """
-  Defines Event structs for use for the log
+  Defines Event structs for use for the log and the PubSub interface for
+  pubbing and subbing to the log
   """
 
   defp topic(), do: "wordprocessor"

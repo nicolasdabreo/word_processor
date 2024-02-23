@@ -1,4 +1,10 @@
 defmodule WPWeb.WordLive do
+  @moduledoc """
+  The Word Processor LiveView, uses the submitter API to allow different types
+  of button form submssions, streams for event log state, finally the process listens to
+  PubSub changes to understand how the Word Processor's state has changed.
+  """
+
   use WPWeb, :live_view
 
   alias WPWeb.WordForm
@@ -26,9 +32,6 @@ defmodule WPWeb.WordLive do
      )
      |> stream(:event_log, [])}
   end
-
-  # These submit handlers are using the new submitter api to allow different
-  # types of form submissions
 
   def handle_event("submit", %{"submit" => "insert", "word" => params}, socket) do
     case WordForm.parse(params) do
