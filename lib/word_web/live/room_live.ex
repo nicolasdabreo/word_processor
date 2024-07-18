@@ -20,16 +20,16 @@ defmodule WordWeb.RoomLive do
   end
 
   def handle_event("create-room", _params, socket) do
-    room_name = Rooms.start_room()
+    room_name = Rooms.create_room()
 
     {:noreply,
      socket
      |> put_flash(:info, "Started new room - #{room_name}")}
   end
 
-  def handle_info({Word.Rooms, :room_created}, socket) do
-    {:noreply,
-     socket
-     |> assign(:rooms, Rooms.list_rooms())}
-  end
+  # def handle_info({Word.Rooms, :room_created}, socket) do
+  #   {:noreply,
+  #    socket
+  #    |> assign(:rooms, Rooms.list_rooms())}
+  # end
 end
