@@ -8,18 +8,18 @@
 import Config
 
 config :word_processor,
-  namespace: WP,
+  namespace: Word,
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
-config :word_processor, WPWeb.Endpoint,
+config :word_processor, WordWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [html: WPWeb.ErrorHTML, json: WPWeb.ErrorJSON],
+    formats: [html: WordWeb.ErrorHTML, json: WordWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: WP.PubSub,
+  pubsub_server: Word.PubSub,
   live_view: [signing_salt: "HJ2y9W3q"]
 
 # Configure esbuild (the version is required)

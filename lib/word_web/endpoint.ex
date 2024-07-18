@@ -1,4 +1,4 @@
-defmodule WPWeb.Endpoint do
+defmodule WordWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :word_processor
 
   # The session will be stored in the cookie and signed,
@@ -23,7 +23,7 @@ defmodule WPWeb.Endpoint do
     at: "/",
     from: :word_processor,
     gzip: false,
-    only: WPWeb.static_paths()
+    only: WordWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
@@ -48,5 +48,5 @@ defmodule WPWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug WPWeb.Router
+  plug WordWeb.Router
 end

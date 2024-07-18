@@ -1,4 +1,4 @@
-defmodule WPWeb.WordForm do
+defmodule WordWeb.WordForm do
   @moduledoc """
   An Ecto schemaless changeset, great for validating data and converting to Phoenix
   forms when you don't have traditional struct/changeset database persistence set up.

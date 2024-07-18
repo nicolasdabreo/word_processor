@@ -1,12 +1,12 @@
-defmodule WPWeb do
+defmodule WordWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, components, channels, and so on.
 
   This can be used in your application as:
 
-      use WPWeb, :controller
-      use WPWeb, :html
+      use WordWeb, :controller
+      use WordWeb, :html
 
   The definitions below will be executed for every controller,
   component, etc, so keep them short and clean, focused
@@ -40,10 +40,10 @@ defmodule WPWeb do
     quote do
       use Phoenix.Controller,
         formats: [:html, :json],
-        layouts: [html: WPWeb.Layouts]
+        layouts: [html: WordWeb.Layouts]
 
       import Plug.Conn
-      import WPWeb.Gettext
+      import WordWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -52,7 +52,7 @@ defmodule WPWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {WPWeb.Layouts, :app}
+        layout: {WordWeb.Layouts, :app}
 
       unquote(html_helpers())
     end
@@ -84,8 +84,8 @@ defmodule WPWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import WPWeb.CoreComponents
-      import WPWeb.Gettext
+      import WordWeb.CoreComponents
+      import WordWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
@@ -98,9 +98,9 @@ defmodule WPWeb do
   def verified_routes do
     quote do
       use Phoenix.VerifiedRoutes,
-        endpoint: WPWeb.Endpoint,
-        router: WPWeb.Router,
-        statics: WPWeb.static_paths()
+        endpoint: WordWeb.Endpoint,
+        router: WordWeb.Router,
+        statics: WordWeb.static_paths()
     end
   end
 

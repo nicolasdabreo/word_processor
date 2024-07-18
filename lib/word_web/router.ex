@@ -1,11 +1,11 @@
-defmodule WPWeb.Router do
-  use WPWeb, :router
+defmodule WordWeb.Router do
+  use WordWeb, :router
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, html: {WPWeb.Layouts, :root}
+    plug :put_root_layout, html: {WordWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -14,14 +14,15 @@ defmodule WPWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", WPWeb do
+  scope "/", WordWeb do
     pipe_through :browser
 
-    live "/", WordLive, :home
+    live "/", RoomLive, :index
+    live "/room/:name", WordLive, :index
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", WPWeb do
+  # scope "/api", WordWeb do
   #   pipe_through :api
   # end
 
@@ -37,7 +38,7 @@ defmodule WPWeb.Router do
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: WPWeb.Telemetry
+      live_dashboard "/dashboard", metrics: WordWeb.Telemetry
     end
   end
 end

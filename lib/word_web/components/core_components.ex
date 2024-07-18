@@ -1,4 +1,4 @@
-defmodule WPWeb.CoreComponents do
+defmodule WordWeb.CoreComponents do
   @moduledoc """
   Provides core UI components.
 
@@ -17,7 +17,7 @@ defmodule WPWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import WPWeb.Gettext
+  import WordWeb.Gettext
 
   @doc """
   Renders a modal.
@@ -212,34 +212,67 @@ defmodule WPWeb.CoreComponents do
     """
   end
 
-  @doc """
-  Renders a button.
+  attr(:type, :string, default: nil)
+  attr(:class, :string, default: nil)
 
-  ## Examples
+  attr(:variant, :string,
+    values: ~w(default secondary destructive outline ghost link),
+    default: "default",
+    doc: "the button variant style"
+  )
 
-      <.button>Send!</.button>
-      <.button phx-click="go" class="ml-2">Send!</.button>
-  """
-  attr :type, :string, default: nil
-  attr :class, :string, default: nil
-  attr :rest, :global, include: ~w(disabled form name value)
+  attr(:size, :string, values: ~w(default sm lg icon), default: "default")
+  attr(:rest, :global, include: ~w(disabled form name value))
 
-  slot :inner_block, required: true
+  slot(:inner_block, required: true)
 
   def button(assigns) do
+    assigns = assign(assigns, :variant_class, variant(assigns))
+
     ~H"""
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
-        @class
+        "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50",
+        @variant_class,
+        @class,
+        ring_classes()
       ]}
       {@rest}
     >
       <%= render_slot(@inner_block) %>
     </button>
     """
+  end
+
+  @variants %{
+    variant: %{
+      "default" => "bg-zinc-600 text-zinc-50 shadow hover:bg-zinc-600/90",
+      "destructive" => "bg-rose-400 text-zinc-50 shadow-sm hover:bg-rose-400/90",
+      "outline" =>
+        "border border-zinc-300 bg-zinc-50 shadow-sm hover:bg-zinc-200 hover:bg-zinc-300",
+      "secondary" => "bg-zinc-300 text-zinc-800 shadow-sm hover:bg-zinc-300/80",
+      "ghost" => "hover:bg-200 hover:bg-zinc-800",
+      "link" => "text-zinc-600 underline-offset-4 hover:underline"
+    },
+    size: %{
+      "default" => "h-9 px-4 py-2",
+      "sm" => "h-8 rounded-md px-3 text-xs",
+      "lg" => "h-10 rounded-md px-8",
+      "icon" => "h-9 w-9"
+    }
+  }
+
+  @default_variants %{
+    variant: "default",
+    size: "default"
+  }
+
+  defp variant(props) do
+    variants = Map.take(props, ~w(variant size)a)
+    variants = Map.merge(@default_variants, variants)
+
+    Enum.map_join(variants, " ", fn {key, value} -> @variants[key][value] end)
   end
 
   @doc """
@@ -275,7 +308,7 @@ defmodule WPWeb.CoreComponents do
   attr :type, :string,
     default: "text",
     values: ~w(checkbox color date datetime-local email file hidden month number password
-               range radio search select tel text textarea time url week)
+               range radio search select tel text textarea time url week radiogroup)
 
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
@@ -317,7 +350,7 @@ defmodule WPWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
+          class={["rounded text-zinc-900", ring_classes(@errors)]}
           {@rest}
         />
         <%= @label %>
@@ -334,7 +367,7 @@ defmodule WPWeb.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="block w-full mt-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
+        class={["block w-full mt-2 bg-white rounded-md shadow-sm sm:text-sm", ring_classes(@errors)]}
         multiple={@multiple}
         {@rest}
       >
@@ -355,14 +388,45 @@ defmodule WPWeb.CoreComponents do
         name={@name}
         class={[
           "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "min-h-[6rem] phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
+          "min-h-[6rem]",
+          ring_classes(@errors)
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
+    """
+  end
+
+  def input(%{type: "radiogroup"} = assigns) do
+    ~H"""
+    <fieldset>
+      <.label for={@id}><%= @label %></.label>
+
+      <div class="flex flex-row flex-wrap gap-3 mt-4">
+        <label
+          :for={{{label, value}, idx} <- Enum.with_index(@options)}
+          for={"#{@id}-#{idx}"}
+          class={[
+            "group flex items-center border border-zinc-600 justify-center px-3 py-3 text-sm font-semibold uppercase rounded-md cursor-pointer sm:flex-1",
+            to_string(@value) == to_string(value) &&
+              "bg-zinc-600 text-zinc-50",
+            ring_classes(@errors)
+          ]}
+        >
+          <input
+            type="radio"
+            name={@name}
+            id={"#{@id}-#{idx}"}
+            value={value}
+            checked={to_string(@value) == to_string(value)}
+            class="sr-only"
+            aria-labelledby={"#{@id}-#{idx}-label"}
+          />
+          <span id={"#{@id}-#{idx}-label"}><%= label %></span>
+        </label>
+      </div>
+    </fieldset>
     """
   end
 
@@ -378,9 +442,7 @@ defmodule WPWeb.CoreComponents do
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
           "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
+          ring_classes(@errors)
         ]}
         {@rest}
       />
@@ -388,6 +450,12 @@ defmodule WPWeb.CoreComponents do
     </div>
     """
   end
+
+  defp ring_classes(errors \\ []),
+    do: [
+      "focus:outline-none focus:border-zinc-300 focus:ring-2 focus:ring-zinc-800 focus:ring-offset-2 focus:ring-offset-white",
+      errors != [] && "border-rose-600 focus-visible:ring-rose-600"
+    ]
 
   @doc """
   Renders a label.
@@ -437,7 +505,7 @@ defmodule WPWeb.CoreComponents do
           <%= render_slot(@subtitle) %>
         </p>
       </div>
-      <div class="flex-none"><%= render_slot(@actions) %></div>
+      <div class="self-start flex-none"><%= render_slot(@actions) %></div>
     </header>
     """
   end
@@ -530,43 +598,43 @@ defmodule WPWeb.CoreComponents do
         <:item title="Views"><%= @post.views %></:item>
       </.list>
   """
-  slot :item, required: true do
+  slot :item do
     attr :title, :string, required: true
   end
 
+  slot :empty
+
   def list(assigns) do
     ~H"""
-    <div class="mt-14">
+    <div class="my-14">
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
           <dt class="flex-none w-1/4 text-zinc-500"><%= item.title %></dt>
           <dd class="text-zinc-700"><%= render_slot(item) %></dd>
         </div>
       </dl>
+      <%= if Enum.empty?(@item) do %>
+        <%= render_slot(@empty) %>
+      <% end %>
     </div>
     """
   end
 
-  @doc """
-  Renders a back navigation link.
-
-  ## Examples
-
-      <.back navigate={~p"/posts"}>Back to posts</.back>
-  """
   attr :navigate, :any, required: true
+  attr :class, :string, default: ""
   slot :inner_block, required: true
 
   def back(assigns) do
     ~H"""
-    <div class="mt-16">
-      <.link
-        navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+    <div class={@class}>
+      <.button
+        phx-click={JS.navigate(@navigate)}
+        class="text-sm font-semibold leading-6"
+        variant="outline"
+        size="icon"
       >
         <.icon name="hero-arrow-left-solid" class="w-3 h-3" />
-        <%= render_slot(@inner_block) %>
-      </.link>
+      </.button>
     </div>
     """
   end
@@ -660,9 +728,9 @@ defmodule WPWeb.CoreComponents do
     # with our gettext backend as first argument. Translations are
     # available in the errors.po file (as we use the "errors" domain).
     if count = opts[:count] do
-      Gettext.dngettext(WPWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(WordWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(WPWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(WordWeb.Gettext, "errors", msg, opts)
     end
   end
 
@@ -716,4 +784,22 @@ defmodule WPWeb.CoreComponents do
   defp truncate_event_struct(struct), do: struct |> Module.split() |> List.last()
   defp render_bool(true), do: "✅"
   defp render_bool(false), do: "❌"
+
+  attr :orientation, :string, values: ~w(vertical horizontal), default: "horizontal"
+  attr :class, :string, default: nil
+  attr :rest, :global, include: ~w(disabled form name value)
+
+  def separator(assigns) do
+    ~H"""
+    <div
+      class={[
+        "shrink-0 bg-zinc-100",
+        (@orientation == "horizontal" && "h-[1px] w-full") || "h-full w-[1px]",
+        @class
+      ]}
+      {@rest}
+    >
+    </div>
+    """
+  end
 end

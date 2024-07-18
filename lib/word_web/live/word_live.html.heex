@@ -1,7 +1,9 @@
+<.back navigate={~p"/"} class="mb-10">Rooms</.back>
+
 <.header>
-  Word Processor Challenge
+  Room Name
   <:subtitle>
-    Welcome! You can change the text edit modes to change the type of action you can take. Vim motions coming soon™
+    You can change the text edit modes to change the type of action you can take. Vim motions coming soon™
   </:subtitle>
 </.header>
 
@@ -23,11 +25,11 @@
     </textarea>
 </div>
 
-<.simple_form for={@mode_form} id="mode-form" phx-change="change-mode" class="w-32">
+<.simple_form for={@mode_form} id="mode-form" phx-change="change-mode">
   <.input
-    type="select"
+    type="radiogroup"
     value={@mode}
-    field={@mode_form[:mode]}
+    field={%{@mode_form[:mode] | id: "mode-change"}}
     label="Text edit mode"
     options={[
       {"Insert", "insert"},

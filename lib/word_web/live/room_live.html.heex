@@ -1,0 +1,28 @@
+<.header class="mt-12">
+  Word Processor Challenge
+  <:subtitle>
+    Welcome! This was a little task I was assigned for an interview, I later came back and spent a day playing with some extra ideas I had for it.
+  </:subtitle>
+  <:actions>
+    <.button phx-click="create-room" variant="secondary">Create a Room</.button>
+  </:actions>
+</.header>
+
+<.separator class="my-10" />
+
+<.table id="rooms" rows={@rooms} row_click={fn {_, room, _} -> JS.navigate(~p"/room/#{room}") end}>
+  <:col :let={{pid, room, value}} label="roomname"><%= room %></:col>
+  <:col :let={{pid, room, value}} label="value"><%= value %></:col>
+  <:empty>
+    <div class="text-center">
+      <.icon name="hero-users" class="w-12 h-12 text-zinc-800" />
+      <h3 class="mt-2 text-sm font-semibold">No rooms active</h3>
+      <p class="mt-1 text-sm text-zinc-500">
+        Why not start a new one and get to processing some words?
+      </p>
+      <div class="mt-6">
+        <.button phx-click="create-room" variant="default">Create a Room</.button>
+      </div>
+    </div>
+  </:empty>
+</.table>

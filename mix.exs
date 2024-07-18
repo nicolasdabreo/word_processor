@@ -1,4 +1,4 @@
-defmodule WP.MixProject do
+defmodule Word.MixProject do
   use Mix.Project
 
   def project do
@@ -18,7 +18,7 @@ defmodule WP.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {WP.Application, []},
+      mod: {Word.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

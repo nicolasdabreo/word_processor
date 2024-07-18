@@ -1,17 +1,17 @@
-defmodule WP.EventLog do
+defmodule Word.EventLog do
   @moduledoc """
   Defines Event structs for use for the log and the PubSub interface for
   pubbing and subbing to the log
   """
 
-  defp topic(), do: "wordprocessor"
+  defp topic(room_name), do: "rooms:#{room_name}"
 
-  def subscribe() do
-    Phoenix.PubSub.subscribe(WP.PubSub, topic())
+  def subscribe(room_name) do
+    Phoenix.PubSub.subscribe(Word.PubSub, topic(room_name))
   end
 
-  def broadcast(event) do
-    Phoenix.PubSub.broadcast(WP.PubSub, topic(), {__MODULE__, event})
+  def broadcast(event, room_name) do
+    Phoenix.PubSub.broadcast(Word.PubSub, topic(room_name), {__MODULE__, event})
   end
 
   defmodule Events.TextInserted do

@@ -1,4 +1,4 @@
-# WP
+# Word
 
 A LiveView based concurrent word processor supporting inserting/deleting/replacing/searching
 with an event log for tracking changes over the liveview process's lifespan. 
