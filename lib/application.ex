@@ -5,8 +5,8 @@ defmodule Word.Application do
   def start(_type, _args) do
     children = [
       WordWeb.Endpoint,
-      {Registry, keys: :unique, name: Word.RoomRegistry},
-      {DynamicSupervisor, strategy: :one_for_one, name: Word.RoomSupervisor},
+      {Registry, keys: :unique, name: Word.Rooms.RoomRegistry},
+      {DynamicSupervisor, strategy: :one_for_one, name: Word.Rooms.RoomManager},
       {Phoenix.PubSub, name: Word.PubSub}
     ]
 

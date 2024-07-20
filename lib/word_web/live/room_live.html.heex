@@ -10,19 +10,15 @@
 
 <.separator class="my-10" />
 
-<.table id="rooms" rows={@rooms} row_click={fn {_, room, _} -> JS.navigate(~p"/room/#{room}") end}>
-  <:col :let={{_pid, room, _value}} label="roomname"><%= room %></:col>
-  <:col :let={{_pid, _room, value}} label="value"><%= value %></:col>
+<.room_list id="rooms">
+  <:room :for={room <- @rooms} navigate={~p"/rooms/#{room.name}"}><%= room.name %></:room>
   <:empty>
-    <div class="text-center">
+    <div class="py-12 text-center">
       <.icon name="hero-users" class="w-12 h-12 text-zinc-800" />
       <h3 class="mt-2 text-sm font-semibold">No rooms active</h3>
       <p class="mt-1 text-sm text-zinc-500">
         Why not start a new one and get to processing some words?
       </p>
-      <div class="mt-6">
-        <.button phx-click="create-room" variant="default">Create a Room</.button>
-      </div>
     </div>
   </:empty>
-</.table>
+</.room_list>

@@ -498,7 +498,6 @@ defmodule WordWeb.CoreComponents do
     <div class="my-14">
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="flex-none w-1/4 text-zinc-500"><%= item.title %></dt>
           <dd class="text-zinc-700"><%= render_slot(item) %></dd>
         </div>
       </dl>
@@ -608,15 +607,8 @@ defmodule WordWeb.CoreComponents do
       <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
         <div class="">
           <p class="text-sm text-gray-500">
-            <%= if truncate_event_struct(@event.__struct__) == "TextSearched" do %>
-              <%= render_bool(@event.result) %> Event <%= truncate_event_struct(@event.__struct__) %>
-              <span class="font-medium text-gray-900"><%= @event.query_text %></span>
-              in <span class="font-medium text-gray-900"><%= @event.processed_text %></span>
-            <% else %>
-              Event <%= truncate_event_struct(@event.__struct__) %> changed
-              <span class="font-medium text-gray-900"><%= @event.raw_text %></span>
-              to <span class="font-medium text-gray-900"><%= @event.processed_text %></span>
-            <% end %>
+            Event <%= truncate_event_struct(@event.__struct__) %> changed
+            <span class="font-medium text-gray-900"><%= @event.raw_text %></span>
           </p>
         </div>
       </div>
@@ -625,8 +617,6 @@ defmodule WordWeb.CoreComponents do
   end
 
   defp truncate_event_struct(struct), do: struct |> Module.split() |> List.last()
-  defp render_bool(true), do: "✅"
-  defp render_bool(false), do: "❌"
 
   attr :orientation, :string, values: ~w(vertical horizontal), default: "horizontal"
   attr :class, :string, default: nil

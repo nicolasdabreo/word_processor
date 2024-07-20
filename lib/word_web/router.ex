@@ -14,6 +14,6 @@ defmodule WordWeb.Router do
     pipe_through :browser
 
     live "/", RoomLive, :index
-    live "/room/:name", WordLive, :index
+    live "/rooms/:name", WordLive, :index
   end
 end
