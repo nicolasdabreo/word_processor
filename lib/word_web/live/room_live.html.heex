@@ -11,8 +11,8 @@
 <.separator class="my-10" />
 
 <.table id="rooms" rows={@rooms} row_click={fn {_, room, _} -> JS.navigate(~p"/room/#{room}") end}>
-  <:col :let={{pid, room, value}} label="roomname"><%= room %></:col>
-  <:col :let={{pid, room, value}} label="value"><%= value %></:col>
+  <:col :let={{_pid, room, _value}} label="roomname"><%= room %></:col>
+  <:col :let={{_pid, _room, value}} label="value"><%= value %></:col>
   <:empty>
     <div class="text-center">
       <.icon name="hero-users" class="w-12 h-12 text-zinc-800" />
