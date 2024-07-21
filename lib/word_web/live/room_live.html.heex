@@ -7,12 +7,12 @@
 
 <.separator class="my-10" />
 
-<div class="flex flex-wrap items-center gap-6 sm:flex-nowrap">
+<div class="flex items-center justify-between gap-6 flex-nowrap">
   <h1 class="text-base font-semibold leading-7 text-zinc-900">Active Rooms</h1>
-  <div class="flex-1 order-last w-full text-sm font-semibold leading-6 gap-x-8 sm:order-none sm:w-auto sm:border-l sm:border-zinc-200 sm:pl-6 sm:leading-7">
+  <div class="flex-1 hidden w-full pl-6 text-sm font-semibold leading-7 border-l sm:flex gap-x-8 sm:w-auto border-zinc-200">
     <p class="text-zinc-600"><%= Enum.count(@rooms) %></p>
   </div>
-  <.button phx-click="create-room" variant="secondary" class="flex-none">Create a Room</.button>
+  <.button phx-click="create-room" variant="secondary" class="self-end"><.icon name="hero-plus" class="flex-shrink-0 w-5 h-5 mr-1" /> Create a Room</.button>
 </div>
 
 <ul role="list" class="grid w-full grid-cols-1 gap-6 py-12 sm:grid-cols-2 md:grid-cols-3">
@@ -38,7 +38,7 @@
       </div>
     </.link>
   </li>
-  <div :if={Enum.empty?(@rooms)} class="col-span-2 text-center">
+  <div :if={Enum.empty?(@rooms)} class="text-center col-span-full">
     <.icon name="hero-users" class="w-12 h-12 text-zinc-800" />
     <h3 class="mt-2 text-sm font-semibold">No rooms active</h3>
     <p class="mt-1 text-sm text-zinc-500">
