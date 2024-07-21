@@ -4,13 +4,14 @@ defmodule Word.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      WordWeb.Endpoint,
-      {Registry, keys: :unique, name: Word.Rooms.RoomRegistry},
+      {Registry, keys: :duplicate, name: Word.Rooms.RoomRegistry},
       {DynamicSupervisor, strategy: :one_for_one, name: Word.Rooms.RoomManager},
-      {Phoenix.PubSub, name: Word.PubSub}
+      {Phoenix.PubSub, name: Word.PubSub},
+      WordWeb.Endpoint,
+      WordWeb.Presence
     ]
 
-    opts = [strategy: :one_for_one, name: Word.Supervisor]
+    opts = [strategy: :one_for_all, name: Word.Supervisor]
     Supervisor.start_link(children, opts)
   end
 

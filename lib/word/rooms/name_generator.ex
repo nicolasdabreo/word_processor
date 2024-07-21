@@ -26,6 +26,6 @@ defmodule Word.Rooms.NameGenerator do
     noun = @nouns |> Enum.random()
     id = :rand.uniform(max_id)
 
-    [adjective, noun, id] |> Enum.join("-") |> String.to_atom()
+    [adjective, noun, id] |> Enum.join("-")
   end
 end

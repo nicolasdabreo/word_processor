@@ -17,7 +17,8 @@ defmodule WordWeb.RoomLive do
 
     {:ok,
      socket
-     |> assign(:rooms, Rooms.list_rooms())}
+     |> assign(:rooms, Rooms.list_rooms())
+     |> assign(:room_count, Rooms.RoomManager.count_rooms())}
   end
 
   def handle_event("create-room", _params, socket) do

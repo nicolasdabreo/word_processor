@@ -10,8 +10,11 @@
 
 <.separator class="my-10" />
 
-<.room_list id="rooms">
-  <:room :for={room <- @rooms} navigate={~p"/rooms/#{room.name}"}><%= room.name %></:room>
+Room count: <%= @room_count %>
+
+<.table id="rooms" rows={@rooms} row_click={fn room -> JS.navigate(~p"/rooms/#{room.name}") end}>
+  <:col :let={room} label="Room"><%= room.name %></:col>
+  <:col :let={room} label="Active Users">0</:col>
   <:empty>
     <div class="py-12 text-center">
       <.icon name="hero-users" class="w-12 h-12 text-zinc-800" />
@@ -21,4 +24,4 @@
       </p>
     </div>
   </:empty>
-</.room_list>
+</.table>

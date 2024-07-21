@@ -11,11 +11,15 @@ defmodule Word.Rooms.RoomState do
 
   use Agent
 
+  alias Word.Rooms.RoomRegistry
+
   @doc """
   Starts an agent linked to the calling process.
   """
-  def start_link(initial_value) do
-    Agent.start_link(fn -> initial_value end)
+  def start_link(initial_value, room_name) do
+    {:ok, pid} = Agent.start_link(fn -> initial_value end)
+    Registry.register(RoomRegistry, "rooms", {room_name, pid})
+    {:ok, pid}
   end
 
   @doc """

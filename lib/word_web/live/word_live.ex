@@ -11,18 +11,19 @@ defmodule WordWeb.WordLive do
   alias Word.Rooms
 
   def mount(%{"name" => name}, _session, socket) do
-    room = Rooms.get_room(String.to_existing_atom(name))
+    room = Rooms.get_room(name)
 
-    if connected?(socket) do
-      Rooms.subscribe(room)
-    end
 
     if is_nil(room) do
       {:ok,
       socket
-      |> put_flash(:info, "That room has timed out")
+      |> put_flash(:error, "That room has timed out")
       |> push_navigate(to: ~p"/")}
     else
+      if connected?(socket) do
+        Rooms.subscribe(room)
+      end
+
       {:ok,
       socket
       |> assign(:room, room)
