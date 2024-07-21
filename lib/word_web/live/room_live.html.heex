@@ -3,25 +3,46 @@
   <:subtitle>
     Welcome! This was a little task I was assigned for an interview, I later came back and spent a day playing with some extra ideas I had for it.
   </:subtitle>
-  <:actions>
-    <.button phx-click="create-room" variant="secondary">Create a Room</.button>
-  </:actions>
 </.header>
 
 <.separator class="my-10" />
 
-Room count: <%= @room_count %>
+<div class="flex flex-wrap items-center gap-6 sm:flex-nowrap">
+  <h1 class="text-base font-semibold leading-7 text-zinc-900">Active Rooms</h1>
+  <div class="flex-1 order-last w-full text-sm font-semibold leading-6 gap-x-8 sm:order-none sm:w-auto sm:border-l sm:border-zinc-200 sm:pl-6 sm:leading-7">
+    <p class="text-zinc-600"><%= Enum.count(@rooms) %></p>
+  </div>
+  <.button phx-click="create-room" variant="secondary" class="flex-none">Create a Room</.button>
+</div>
 
-<.table id="rooms" rows={@rooms} row_click={fn room -> JS.navigate(~p"/rooms/#{room.name}") end}>
-  <:col :let={room} label="Room"><%= room.name %></:col>
-  <:col :let={room} label="Active Users">0</:col>
-  <:empty>
-    <div class="py-12 text-center">
-      <.icon name="hero-users" class="w-12 h-12 text-zinc-800" />
-      <h3 class="mt-2 text-sm font-semibold">No rooms active</h3>
-      <p class="mt-1 text-sm text-zinc-500">
-        Why not start a new one and get to processing some words?
-      </p>
-    </div>
-  </:empty>
-</.table>
+<ul role="list" class="grid w-full grid-cols-1 gap-6 py-12 sm:grid-cols-2 md:grid-cols-3">
+  <li
+    :for={{room, idx} <- Enum.with_index(@rooms)}
+    id={"room-#{idx}"}
+    class="flex flex-col col-span-1 text-center border rounded-lg shadow border-zinc-100 group"
+  >
+    <.link
+      class="flex flex-row flex-1 gap-6 p-8 rounded-lg sm:gap-0 sm:flex-col sm:items-center sm:group-hover:bg-muted focus:outline-none focus:border-input focus:ring-2 focus:ring-zinc-800 focus:ring-offset-2 focus:ring-offset-white"
+      navigate={~p"/rooms/#{room.name}"}
+    >
+      <div class="flex items-center justify-center w-32 h-32 border rounded-lg border-zinc-100 bg-zinc-50">
+        <span class="absolute font-black">ABC</span>
+      </div>
+      <div class="flex flex-col justify-center gap-1 my-auto sm:gap-0">
+        <h3 class="text-sm font-medium sm:mt-6"><%= room.name %></h3>
+        <dl class="flex flex-col flex-grow gap-1 mt-1">
+          <dd class="text-sm group-hover:bg-muted">
+            <.icon name="hero-users-solid" class="flex-shrink-0 w-5 h-5 mr-1" /> 0
+          </dd>
+        </dl>
+      </div>
+    </.link>
+  </li>
+  <div :if={Enum.empty?(@rooms)} class="col-span-2 text-center">
+    <.icon name="hero-users" class="w-12 h-12 text-zinc-800" />
+    <h3 class="mt-2 text-sm font-semibold">No rooms active</h3>
+    <p class="mt-1 text-sm text-zinc-500">
+      Why not start a new one and get to processing some words?
+    </p>
+  </div>
+</ul>

@@ -32,7 +32,7 @@ defmodule WordWeb.RoomLive do
   def handle_info({Rooms, %RoomCreated{room_name: name}}, socket) do
     {:noreply,
      socket
-     |> update(:rooms, fn rooms -> rooms ++ [Rooms.get_room(name)] end)}
+     |> update(:rooms, fn rooms ->  [Rooms.get_room(name)] ++ rooms end)}
   end
 
 
