@@ -1,7 +1,12 @@
 <.header class="mt-12">
   Word Processor Challenge
   <:subtitle>
-    Welcome! This was a little task I was assigned for an interview, I later came back and spent a day playing with some extra ideas I had for it.
+    This was a little task I was assigned for an interview, after completing I had some ideas to expand and deploy it for fun.
+    <br/>
+    <br/>
+    I started by expanding out from a single Agent to a DynamicSupervisor with a process Registry for tracking dynamic Agents acting as "Rooms". 
+    I then added "Personas" for an anonymous user system to incorporate Presence tracking.
+    Finally I moved the event system over from ephemeral PubSub state to ETS, this allowed the incorporation of long-term events that can also be reverted.
   </:subtitle>
 </.header>
 

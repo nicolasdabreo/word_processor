@@ -117,4 +117,72 @@ defmodule WordWeb.WordLive do
   def handle_info(_, socket) do
     {:noreply, socket}
   end
+
+
+  attr :stream, :any, required: true
+  attr :stream_length, :integer, required: true
+  attr :persona, :any, required: true
+
+  def event_log(assigns) do
+    ~H"""
+    <ul id="event" phx-update="stream" phx-page-loading class="flex flex-col gap-3">
+      <li :for={{id, event} <- @stream} id={id}>
+        <.log_entry event={event} persona={@persona} />
+      </li>
+    </ul>
+    <div :if={@stream_length < 1} class="mt-5 text-base font-semibold text-center">
+      Nothing has happened yet...
+    </div>
+    """
+  end
+
+  attr :event, :any, required: true
+  attr :persona, :any, required: true
+
+  defp log_entry(assigns) do
+    ~H"""
+    <div class="relative pb-8">
+      <span class="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+      <div class="relative flex space-x-3">
+        <div>
+          <span class="flex items-center justify-center w-8 h-8 bg-gray-400 rounded-full ring-8 ring-white">
+            <.icon name="hero-bars-3-bottom-left" class="w-5 h-5 text-white" />
+          </span>
+        </div>
+        <div class="flex justify-between flex-1 min-w-0 space-x-4">
+          <div>
+            <div class="flex flex-row items-center justify-center gap-2">
+              <p class="text-sm font-semibold text-zinc-600"><%= truncate_event_struct(@event.__struct__) %> by</p>
+              <.tooltip>
+                <div class="z-0 inline-flex w-8 h-8 rounded-full cursor-pointer bg-zinc-50">
+                  <span class="flex items-center justify-center w-full h-full text-xl">
+                    <%= @persona.emoji %>
+                  </span>
+                </div>
+                <.tooltip_content side="right">
+                  <%= @persona.name %>
+                </.tooltip_content>
+              </.tooltip>
+            </div>
+            <span class="text-sm text-zinc-900">
+              <%= case truncate_event_struct(@event.__struct__) do %>
+                <% "TextInserted" -> %>
+                  "<%= @event.inserted_text %>" inserted
+                <% "TextReplaced" -> %>
+                  "<%= @event.query_text %>" replaced with "<%= @event.replaced_with %>"
+                <% "TextDeleted" -> %>
+                  "<%= @event.deleted_text %>" deleted
+              <% end %>
+            </span>
+          </div>
+          <div class="text-sm text-right text-gray-500 whitespace-nowrap">
+            <time datetime="2020-09-20">Sep 20</time>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  defp truncate_event_struct(struct), do: struct |> Module.split() |> List.last()
 end

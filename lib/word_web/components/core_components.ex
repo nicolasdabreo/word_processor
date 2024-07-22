@@ -585,51 +585,6 @@ defmodule WordWeb.CoreComponents do
     |> JS.pop_focus()
   end
 
-  attr :stream, :any, required: true
-  attr :stream_length, :integer, required: true
-
-  def event_log(assigns) do
-    ~H"""
-    <ul id="event" phx-update="stream" phx-page-loading class="flex flex-col gap-6">
-      <li :for={{id, event} <- @stream} id={id}>
-        <.log_entry event={event} />
-      </li>
-    </ul>
-    <div :if={@stream_length < 1} class="mt-5 text-base font-semibold text-center">
-      Nothing has happened yet...
-    </div>
-    """
-  end
-
-  attr :event, :any, required: true
-  attr :icon_name, :string
-
-  defp log_entry(assigns) do
-    ~H"""
-    <div class="relative pb-8">
-      <span class="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
-      <div class="relative flex space-x-3">
-        <div>
-          <span class="flex items-center justify-center w-8 h-8 bg-gray-400 rounded-full ring-8 ring-white">
-            <.icon name={@icon_name} class="w-5 h-5 text-white" />
-          </span>
-        </div>
-        <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
-          <div>
-            <p class="text-sm text-gray-500"><%= truncate_event_struct(@event.__struct__) %></p>
-            <span class="font-medium text-gray-900"><%= @event.raw_text %></span>
-          </div>
-          <div class="text-sm text-right text-gray-500 whitespace-nowrap">
-            <time datetime="2020-09-20">Sep 20</time>
-          </div>
-        </div>
-      </div>
-    </div>
-    """
-  end
-
-  defp truncate_event_struct(struct), do: struct |> Module.split() |> List.last()
-
   attr :orientation, :string, values: ~w(vertical horizontal), default: "horizontal"
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
@@ -656,7 +611,7 @@ defmodule WordWeb.CoreComponents do
     ~H"""
     <div
       class={[
-        "relative group/tooltip inline-block",
+        "relative group/tooltip inline-flex",
         @class
       ]}
       {@rest}
