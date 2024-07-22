@@ -9,9 +9,9 @@ defmodule WordWeb.RoomLive do
 
   alias Word.Events.RoomCreated
   alias Word.Rooms
-  alias WordWeb.Persona
 
-  on_mount Persona
+  on_mount WordWeb.Persona
+  on_mount WordWeb.Presence
 
   def mount(_params, _session, socket) do
     if connected?(socket) do
@@ -38,6 +38,10 @@ defmodule WordWeb.RoomLive do
      |> update(:rooms, fn rooms -> [Rooms.get_room(name)] ++ rooms end)}
   end
 
+  def handle_info(_, socket) do
+    {:noreply, socket}
+  end
+
   defp truncate_room_name(%{name: name}) when not is_nil(name) do
     name
     |> String.split("-")
@@ -48,6 +52,14 @@ defmodule WordWeb.RoomLive do
   end
 
   defp truncate_room_name(_), do: ""
+
+  defp room_member_count(presences, room_name) do
+    presences
+    |> Enum.filter(fn %{metas: metas} ->
+      Enum.any?(metas, fn meta -> meta.room_name == room_name end)
+    end)
+    |> Enum.count()
+  end
 
   slot :room do
     attr :navigate, :any

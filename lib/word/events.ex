@@ -21,7 +21,3 @@ end
 defmodule Word.Events.RoomLeft do
   defstruct room_name: nil
 end
-
-defmodule Word.Events.RoomTimedOut do
-  defstruct room_name: nil
-end

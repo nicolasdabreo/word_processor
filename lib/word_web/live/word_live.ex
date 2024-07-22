@@ -10,9 +10,8 @@ defmodule WordWeb.WordLive do
   alias WordWeb.WordForm
   alias Word.Rooms
 
-  alias WordWeb.Persona
-
-  on_mount Persona
+  on_mount WordWeb.Persona
+  on_mount WordWeb.Presence
 
   def mount(%{"name" => name}, _session, socket) do
     room = Rooms.get_room(name)
@@ -28,16 +27,16 @@ defmodule WordWeb.WordLive do
       end
 
       {:ok,
-       socket
-       |> assign(:room, room)
-       |> assign(:mode, :insert)
-       |> assign(:form, to_form(%{}, as: "word"))
-       |> assign(:mode_form, to_form(%{}, as: "mode"))
-       |> assign(:log_length, 0)
-       |> stream_configure(:event_log,
-         dom_id: fn _ -> "log-#{System.unique_integer([:positive, :monotonic])}" end
-       )
-       |> stream(:event_log, [])}
+        socket
+        |> assign(:room, room)
+        |> assign(:mode, :insert)
+        |> assign(:form, to_form(%{}, as: "word"))
+        |> assign(:mode_form, to_form(%{}, as: "mode"))
+        |> assign(:log_length, 0)
+        |> stream_configure(:event_log,
+          dom_id: fn _ -> "log-#{System.unique_integer([:positive, :monotonic])}" end
+        )
+        |> stream(:event_log, [])}
     end
   end
 
@@ -113,5 +112,9 @@ defmodule WordWeb.WordLive do
      socket
      |> update(:log_length, fn len -> len + 1 end)
      |> stream_insert(:event_log, event, at: 0)}
+  end
+
+  def handle_info(_, socket) do
+    {:noreply, socket}
   end
 end
