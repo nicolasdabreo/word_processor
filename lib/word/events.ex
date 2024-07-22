@@ -13,11 +13,3 @@ end
 defmodule Word.Events.RoomCreated do
   defstruct room_name: nil
 end
-
-defmodule Word.Events.RoomJoined do
-  defstruct room_name: nil
-end
-
-defmodule Word.Events.RoomLeft do
-  defstruct room_name: nil
-end

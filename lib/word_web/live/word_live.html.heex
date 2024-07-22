@@ -1,6 +1,18 @@
 <.back navigate={~p"/"} class="mb-10">Rooms</.back>
 
 <.header>
+  <div class="flex -space-x-2 isolate">
+    <.tooltip :for={presence <- @presences}>
+      <div class="z-0 inline-block w-8 h-8 rounded-full cursor-pointer bg-zinc-50">
+        <span class="flex items-center justify-center w-full h-full text-xl">
+          <%= presence.user.emoji %>
+        </span>
+      </div>
+      <.tooltip_content side="right">
+        <%= presence.user.name %>
+      </.tooltip_content>
+    </.tooltip>
+  </div>
   <%= @room.name %>
   <:subtitle>
     You can change the text edit modes to change the type of action you can take. Vim motions coming soon™

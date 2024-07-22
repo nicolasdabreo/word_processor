@@ -676,14 +676,17 @@ defmodule WordWeb.CoreComponents do
 
   attr :class, :string, default: nil
   attr :rest, :global
+  attr :side, :string, default: "left"
   slot :inner_block, required: true
 
   def tooltip_content(assigns) do
     ~H"""
     <div
       class={[
-        "tooltip-content absolute whitespace-nowrap hidden group-hover/tooltip:block right-0 top-full mt-2",
+        "tooltip-content absolute whitespace-nowrap hidden group-hover/tooltip:block top-full mt-2",
         "z-50 w-auto overflow-hidden rounded-md border bg-zinc-50 px-3 py-1.5 text-sm shadow-md animate-in fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        @side == "left" && "right-0",
+        @side == "right" && "left-0",
         @class
       ]}
       {@rest}

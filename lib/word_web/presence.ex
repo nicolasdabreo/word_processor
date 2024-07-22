@@ -9,8 +9,10 @@ defmodule WordWeb.Presence do
 
   def list_online_users(), do: list("online_users") |> Enum.map(fn {_id, presence} -> presence end)
 
-  def track_user(persona_id, persona_name, room_name), do: track(self(), "online_users", persona_id, %{
+  def track_user(persona_id, persona_name, persona_emoji, room_name), do: track(self(), "online_users", persona_id, %{
+    id: persona_id,
     name: persona_name,
+    emoji: persona_emoji,
     joined_at: :os.system_time(:seconds),
     room_name: room_name
   })
@@ -27,7 +29,7 @@ defmodule WordWeb.Presence do
     for {key, %{metas: [meta | metas]}} <- presences, into: %{} do
       # user can be populated here from the database here we populate
       # the name for demonstration purposes
-      {key, %{metas: [meta | metas], id: meta.name, user: %{name: meta.name}}}
+      {key, %{metas: [meta | metas], id: meta.name, user: %{name: meta.name, id: meta.id, emoji: meta.emoji}}}
     end
   end
 
@@ -61,7 +63,7 @@ defmodule WordWeb.Presence do
     socket =
       if LiveView.connected?(socket) do
         if params["name"] do
-          track_user(session["persona_id"], session["persona_name"], params["name"])
+          track_user(session["persona_id"], session["persona_name"], session["persona_emoji"], params["name"])
         end
         subscribe()
         Phoenix.Component.assign(socket, :presences, list_online_users())
