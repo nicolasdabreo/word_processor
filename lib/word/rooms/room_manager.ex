@@ -8,7 +8,7 @@ defmodule Word.Rooms.RoomManager do
   end
 
   def init(:ok) do
-    DynamicSupervisor.init(strategy: :one_for_one, max_children: 100)
+    DynamicSupervisor.init(strategy: :one_for_one, max_children: 10)
   end
 
   def start_room(name) do
@@ -19,13 +19,7 @@ defmodule Word.Rooms.RoomManager do
       type: :worker
     }
 
-    case DynamicSupervisor.start_child(__MODULE__, spec) do
-      {:ok, pid} ->
-        {:ok, pid}
-
-      error ->
-        error
-    end
+    DynamicSupervisor.start_child(__MODULE__, spec)
   end
 
   def list_rooms do
@@ -38,7 +32,16 @@ defmodule Word.Rooms.RoomManager do
   end
 
   def get_room(name) do
-    Enum.find(list_rooms(), & &1.name == name)
+    Registry.lookup(RoomRegistry, "rooms")
+    |> Enum.find(fn {_, {room_name, _}} -> room_name == name end)
+    |> case do
+      nil ->
+        nil
+
+      {_, {_, room_pid}} ->
+        state = RoomState.get(room_pid)
+        %Room{pid: room_pid, name: name, state: state}
+    end
   end
 
   def count_rooms() do

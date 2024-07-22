@@ -8,6 +8,7 @@ defmodule WordWeb.Router do
     plug :put_root_layout, html: {WordWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug WordWeb.Persona
   end
 
   scope "/", WordWeb do

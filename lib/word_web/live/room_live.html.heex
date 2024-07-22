@@ -12,7 +12,9 @@
   <div class="flex-1 hidden w-full pl-6 text-sm font-semibold leading-7 border-l sm:flex gap-x-8 sm:w-auto border-zinc-200">
     <p class="text-zinc-600"><%= Enum.count(@rooms) %></p>
   </div>
-  <.button phx-click="create-room" variant="secondary" class="self-end"><.icon name="hero-plus" class="flex-shrink-0 w-5 h-5 mr-1" /> Create a Room</.button>
+  <.button phx-click="create-room" variant="secondary" class="self-end">
+    <.icon name="hero-plus" class="flex-shrink-0 w-5 h-5 mr-1" /> Create a Room
+  </.button>
 </div>
 
 <ul role="list" class="grid w-full grid-cols-1 gap-6 py-12 sm:grid-cols-2 md:grid-cols-3">
@@ -22,11 +24,11 @@
     class="flex flex-col col-span-1 text-center border rounded-lg shadow border-zinc-100 group"
   >
     <.link
-      class="flex flex-row flex-1 gap-6 p-8 rounded-lg sm:gap-0 sm:flex-col sm:items-center sm:group-hover:bg-muted focus:outline-none focus:border-input focus:ring-2 focus:ring-zinc-800 focus:ring-offset-2 focus:ring-offset-white"
+      class="flex flex-row flex-1 gap-6 p-8 rounded-lg sm:gap-0 sm:flex-col sm:items-center focus:outline-none focus:border-zinc-400 focus:ring-2 focus:ring-zinc-800 focus:ring-offset-2 focus:ring-offset-white"
       navigate={~p"/rooms/#{room.name}"}
     >
       <div class="flex items-center justify-center w-32 h-32 border rounded-lg border-zinc-100 bg-zinc-50">
-        <span class="absolute font-black">ABC</span>
+        <span class="absolute font-black"><%= truncate_room_name(room) %></span>
       </div>
       <div class="flex flex-col justify-center gap-1 my-auto sm:gap-0">
         <h3 class="text-sm font-medium sm:mt-6"><%= room.name %></h3>

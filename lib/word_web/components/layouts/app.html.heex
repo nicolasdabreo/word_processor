@@ -8,6 +8,19 @@
         v<%= Application.spec(:phoenix, :vsn) %>
       </p>
     </div>
+
+    <div class="flex -space-x-2 isolate">
+      <.tooltip>
+        <div class="z-0 inline-block w-8 h-8 rounded-full cursor-pointer bg-zinc-50">
+          <span class="flex items-center justify-center w-full h-full text-xl">
+            <%= @persona.emoji %>
+          </span>
+        </div>
+        <.tooltip_content>
+          <%= @persona.name %>
+        </.tooltip_content>
+      </.tooltip>
+    </div>
   </div>
 </header>
 <main class="px-4 py-8 sm:px-6 lg:px-8">

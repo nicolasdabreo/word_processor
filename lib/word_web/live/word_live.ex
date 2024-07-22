@@ -10,31 +10,34 @@ defmodule WordWeb.WordLive do
   alias WordWeb.WordForm
   alias Word.Rooms
 
+  alias WordWeb.Persona
+
+  on_mount Persona
+
   def mount(%{"name" => name}, _session, socket) do
     room = Rooms.get_room(name)
 
-
     if is_nil(room) do
       {:ok,
-      socket
-      |> put_flash(:error, "That room has timed out")
-      |> push_navigate(to: ~p"/")}
+       socket
+       |> put_flash(:error, "That room has timed out")
+       |> push_navigate(to: ~p"/")}
     else
       if connected?(socket) do
         Rooms.subscribe(room)
       end
 
       {:ok,
-      socket
-      |> assign(:room, room)
-      |> assign(:mode, :insert)
-      |> assign(:form, to_form(%{}, as: "word"))
-      |> assign(:mode_form, to_form(%{}, as: "mode"))
-      |> assign(:log_length, 0)
-      |> stream_configure(:event_log,
-      dom_id: fn _ -> "log-#{System.unique_integer([:positive, :monotonic])}" end
-      )
-      |> stream(:event_log, [])}
+       socket
+       |> assign(:room, room)
+       |> assign(:mode, :insert)
+       |> assign(:form, to_form(%{}, as: "word"))
+       |> assign(:mode_form, to_form(%{}, as: "mode"))
+       |> assign(:log_length, 0)
+       |> stream_configure(:event_log,
+         dom_id: fn _ -> "log-#{System.unique_integer([:positive, :monotonic])}" end
+       )
+       |> stream(:event_log, [])}
     end
   end
 
@@ -42,9 +45,10 @@ defmodule WordWeb.WordLive do
     case WordForm.parse(params) do
       {:ok, %{prompt: text_to_insert, position: position}} ->
         room = Rooms.insert_text(socket.assigns.room, position, text_to_insert)
+
         {:noreply,
-        socket
-      |> assign(:room, room)}
+         socket
+         |> assign(:room, room)}
 
       {:error, changeset} ->
         {:noreply,
@@ -57,9 +61,10 @@ defmodule WordWeb.WordLive do
     case WordForm.parse(params) do
       {:ok, %{prompt: text_to_find, replace: replacement_text}} ->
         room = Rooms.replace_text(socket.assigns.room, text_to_find, replacement_text)
+
         {:noreply,
-        socket
-      |> assign(:room, room)}
+         socket
+         |> assign(:room, room)}
 
       {:error, changeset} ->
         {:noreply,
@@ -72,9 +77,10 @@ defmodule WordWeb.WordLive do
     case WordForm.parse(params) do
       {:ok, %{prompt: text_to_delete}} ->
         room = Rooms.delete_text(socket.assigns.room, text_to_delete)
+
         {:noreply,
-        socket
-      |> assign(:room, room)}
+         socket
+         |> assign(:room, room)}
 
       {:error, changeset} ->
         {:noreply,

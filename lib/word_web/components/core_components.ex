@@ -367,7 +367,9 @@ defmodule WordWeb.CoreComponents do
   defp ring_classes(errors \\ []),
     do: [
       "focus:outline-none focus:border-zinc-300 focus:ring-2 focus:ring-zinc-800 focus:ring-offset-2 focus:ring-offset-white",
-      errors != [] && "border-rose-600 focus-visible:ring-rose-600"
+      "focus-within:outline-none focus-within:border-zinc-300 focus-within:ring-2 focus-within:ring-zinc-800 focus-within:ring-offset-2 focus-within:ring-offset-white",
+      errors != [] &&
+        "border-rose-600 focus-visible:ring-rose-600 focus-within:border-rose-600 focus-within:ring-rose-600"
     ]
 
   attr :for, :string, default: nil
@@ -600,16 +602,26 @@ defmodule WordWeb.CoreComponents do
   end
 
   attr :event, :any, required: true
+  attr :icon_name, :string
 
   defp log_entry(assigns) do
     ~H"""
-    <div class="relative flex space-x-3">
-      <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
-        <div class="">
-          <p class="text-sm text-gray-500">
-            Event <%= truncate_event_struct(@event.__struct__) %> changed
+    <div class="relative pb-8">
+      <span class="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+      <div class="relative flex space-x-3">
+        <div>
+          <span class="flex items-center justify-center w-8 h-8 bg-gray-400 rounded-full ring-8 ring-white">
+            <.icon name={@icon_name} class="w-5 h-5 text-white" />
+          </span>
+        </div>
+        <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+          <div>
+            <p class="text-sm text-gray-500"><%= truncate_event_struct(@event.__struct__) %></p>
             <span class="font-medium text-gray-900"><%= @event.raw_text %></span>
-          </p>
+          </div>
+          <div class="text-sm text-right text-gray-500 whitespace-nowrap">
+            <time datetime="2020-09-20">Sep 20</time>
+          </div>
         </div>
       </div>
     </div>
@@ -632,6 +644,51 @@ defmodule WordWeb.CoreComponents do
       ]}
       {@rest}
     >
+    </div>
+    """
+  end
+
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
+
+  def tooltip(assigns) do
+    ~H"""
+    <div
+      class={[
+        "relative group/tooltip inline-block",
+        @class
+      ]}
+      {@rest}
+    >
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  slot :inner_block, required: true
+
+  def tooltip_trigger(assigns) do
+    ~H"""
+    <%= render_slot(@inner_block) %>
+    """
+  end
+
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
+
+  def tooltip_content(assigns) do
+    ~H"""
+    <div
+      class={[
+        "tooltip-content absolute whitespace-nowrap hidden group-hover/tooltip:block right-0 top-full mt-2",
+        "z-50 w-auto overflow-hidden rounded-md border bg-zinc-50 px-3 py-1.5 text-sm shadow-md animate-in fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        @class
+      ]}
+      {@rest}
+    >
+      <%= render_slot(@inner_block) %>
     </div>
     """
   end

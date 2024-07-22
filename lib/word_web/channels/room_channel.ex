@@ -3,11 +3,13 @@ defmodule WordWeb.RoomChannel do
 
   alias WordWeb.Presence
 
+  @impl true
   def join("room:topic", _params, socket) do
     send(self(), :after_join)
     {:ok, socket}
   end
 
+  @impl true
   def handle_info(:after_join, socket) do
     {:ok, _} =
       Presence.track(socket, "ASDF", %{
@@ -18,8 +20,6 @@ defmodule WordWeb.RoomChannel do
     {:noreply, socket}
   end
 
-
-  @impl true
   def handle_info(%Phoenix.Socket.Broadcast{event: "presence_diff", payload: diff}, socket) do
     {
       :noreply,
@@ -30,7 +30,7 @@ defmodule WordWeb.RoomChannel do
   end
 
   defp handle_joins(socket, joins) do
-    Enum.reduce(joins, socket, fn {user, %{metas: [meta| _]}}, socket ->
+    Enum.reduce(joins, socket, fn {user, %{metas: [meta | _]}}, socket ->
       assign(socket, :users, Map.put(socket.assigns.users, user, meta))
     end)
   end

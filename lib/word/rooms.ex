@@ -18,7 +18,8 @@ defmodule Word.Rooms do
   def broadcast(event), do: Phoenix.PubSub.broadcast(Word.PubSub, topic(), {__MODULE__, event})
 
   @spec broadcast(Room.t(), String.t()) :: :ok | {:error, term()}
-  def broadcast(%Room{} = room, event), do: Phoenix.PubSub.broadcast(Word.PubSub, topic(room), {__MODULE__, event})
+  def broadcast(%Room{} = room, event),
+    do: Phoenix.PubSub.broadcast(Word.PubSub, topic(room), {__MODULE__, event})
 
   def list_rooms() do
     RoomManager.list_rooms()
@@ -32,11 +33,9 @@ defmodule Word.Rooms do
     room_name = NameGenerator.generate()
     {:ok, pid} = RoomManager.start_room(room_name)
 
-    broadcast(
-      %Events.RoomCreated{
-        room_name: room_name,
-      }
-    )
+    broadcast(%Events.RoomCreated{
+      room_name: room_name
+    })
 
     %Room{name: room_name, pid: pid, state: ""}
   end
@@ -79,7 +78,7 @@ defmodule Word.Rooms do
       room,
       %Events.TextReplaced{
         query_text: substring,
-        replaced_with: replacement_text,
+        replaced_with: replacement_text
       }
     )
 

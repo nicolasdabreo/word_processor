@@ -9,6 +9,9 @@ defmodule WordWeb.RoomLive do
 
   alias Word.Events.RoomCreated
   alias Word.Rooms
+  alias WordWeb.Persona
+
+  on_mount Persona
 
   def mount(_params, _session, socket) do
     if connected?(socket) do
@@ -32,9 +35,19 @@ defmodule WordWeb.RoomLive do
   def handle_info({Rooms, %RoomCreated{room_name: name}}, socket) do
     {:noreply,
      socket
-     |> update(:rooms, fn rooms ->  [Rooms.get_room(name)] ++ rooms end)}
+     |> update(:rooms, fn rooms -> [Rooms.get_room(name)] ++ rooms end)}
   end
 
+  defp truncate_room_name(%{name: name}) when not is_nil(name) do
+    name
+    |> String.split("-")
+    |> Enum.map(&String.at(&1, 0))
+    |> Enum.take(3)
+    |> Enum.join()
+    |> String.upcase()
+  end
+
+  defp truncate_room_name(_), do: ""
 
   slot :room do
     attr :navigate, :any
@@ -49,7 +62,10 @@ defmodule WordWeb.RoomLive do
       <ul role="list" class="grid grid-cols-1 gap-5 mt-3 sm:grid-cols-2 sm:gap-6">
         <li :for={room <- @room} class="flex col-span-1 rounded-md shadow-sm">
           <div class="flex items-center justify-between flex-1 truncate bg-white border border-gray-200 rounded-md">
-            <.link href={room.navigate} class="font-medium text-center text-gray-900 hover:text-gray-600">
+            <.link
+              href={room.navigate}
+              class="font-medium text-center text-gray-900 hover:text-gray-600"
+            >
               <div class="px-4 py-2 text-sm text-center truncate">
                 <%= render_slot(room) %>
               </div>
