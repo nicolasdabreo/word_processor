@@ -7,15 +7,18 @@ defmodule WordWeb.Presence do
 
   ### API
 
-  def list_online_users(), do: list("online_users") |> Enum.map(fn {_id, presence} -> presence end)
+  def list_online_users(),
+    do: list("online_users") |> Enum.map(fn {_id, presence} -> presence end)
 
-  def track_user(persona_id, persona_name, persona_emoji, room_name), do: track(self(), "online_users", persona_id, %{
-    id: persona_id,
-    name: persona_name,
-    emoji: persona_emoji,
-    joined_at: :os.system_time(:seconds),
-    room_name: room_name
-  })
+  def track_user(persona_id, persona_name, persona_emoji, room_name),
+    do:
+      track(self(), "online_users", persona_id, %{
+        id: persona_id,
+        name: persona_name,
+        emoji: persona_emoji,
+        joined_at: :os.system_time(:seconds),
+        room_name: room_name
+      })
 
   def subscribe(), do: Phoenix.PubSub.subscribe(Word.PubSub, "proxy:online_users")
 
@@ -29,7 +32,12 @@ defmodule WordWeb.Presence do
     for {key, %{metas: [meta | metas]}} <- presences, into: %{} do
       # user can be populated here from the database here we populate
       # the name for demonstration purposes
-      {key, %{metas: [meta | metas], id: meta.name, user: %{name: meta.name, id: meta.id, emoji: meta.emoji}}}
+      {key,
+       %{
+         metas: [meta | metas],
+         id: meta.name,
+         user: %{name: meta.name, id: meta.id, emoji: meta.emoji}
+       }}
     end
   end
 
@@ -63,8 +71,14 @@ defmodule WordWeb.Presence do
     socket =
       if LiveView.connected?(socket) do
         if params["name"] do
-          track_user(session["persona_id"], session["persona_name"], session["persona_emoji"], params["name"])
+          track_user(
+            session["persona_id"],
+            session["persona_name"],
+            session["persona_emoji"],
+            params["name"]
+          )
         end
+
         subscribe()
         Phoenix.Component.assign(socket, :presences, list_online_users())
       else
@@ -72,20 +86,20 @@ defmodule WordWeb.Presence do
       end
 
     {:cont,
-      socket
-      |> LiveView.attach_hook(:presence_hooks, :handle_info, fn
-        {WordWeb.Presence, {:join, _presence}}, socket ->
-          {:cont, Phoenix.Component.assign(socket, :presences, list_online_users())}
+     socket
+     |> LiveView.attach_hook(:presence_hooks, :handle_info, fn
+       {WordWeb.Presence, {:join, _presence}}, socket ->
+         {:cont, Phoenix.Component.assign(socket, :presences, list_online_users())}
 
-        {WordWeb.Presence, {:leave, presence}}, socket ->
-          if presence.metas == [] do
-            {:cont, Phoenix.Component.assign(socket, :presences, list_online_users())}
-          else
-            {:cont, Phoenix.Component.assign(socket, :presences, list_online_users())}
-          end
+       {WordWeb.Presence, {:leave, presence}}, socket ->
+         if presence.metas == [] do
+           {:cont, Phoenix.Component.assign(socket, :presences, list_online_users())}
+         else
+           {:cont, Phoenix.Component.assign(socket, :presences, list_online_users())}
+         end
 
-        _event, socket ->
-          {:cont, socket}
-      end)}
+       _event, socket ->
+         {:cont, socket}
+     end)}
   end
 end

@@ -7,10 +7,15 @@ defmodule WordWeb.Persona do
 
   alias Word.Persona
 
-  def on_mount(:default, _params, %{"persona_id" => id, "persona_name" => name, "persona_emoji" => emoji}, socket) do
+  def on_mount(
+        :default,
+        _params,
+        %{"persona_id" => id, "persona_name" => name, "persona_emoji" => emoji},
+        socket
+      ) do
     {:cont,
-      socket
-      |> Phoenix.Component.assign(:persona, %Persona{id: id, name: name, emoji: emoji})}
+     socket
+     |> Phoenix.Component.assign(:persona, %Persona{id: id, name: name, emoji: emoji})}
   end
 
   def init(param), do: param

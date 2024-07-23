@@ -14,10 +14,10 @@ defmodule Word.Rooms do
   @spec subscribe(Room.t()) :: :ok | {:error, {:already_registered, pid()}}
   def subscribe(%Room{} = room), do: Phoenix.PubSub.subscribe(Word.PubSub, topic(room))
 
-  @spec broadcast(String.t()) :: :ok | {:error, term()}
+  @spec broadcast(any()) :: :ok | {:error, term()}
   def broadcast(event), do: Phoenix.PubSub.broadcast(Word.PubSub, topic(), {__MODULE__, event})
 
-  @spec broadcast(Room.t(), String.t()) :: :ok | {:error, term()}
+  @spec broadcast(Room.t(), any()) :: :ok | {:error, term()}
   def broadcast(%Room{} = room, event),
     do: Phoenix.PubSub.broadcast(Word.PubSub, topic(room), {__MODULE__, event})
 
@@ -40,47 +40,38 @@ defmodule Word.Rooms do
     %Room{name: room_name, pid: pid, state: ""}
   end
 
-  def close_room(%Room{name: _name}) do
-    :ok
-  end
-
   def insert_text(%Room{pid: pid} = room, position, new_text) do
-    {_prev_state, new_state} = RoomState.insert(pid, position, new_text)
+    event = %Events.TextInserted{
+      inserted_text: new_text,
+      inserted_at: position
+    }
 
-    broadcast(
-      room,
-      %Events.TextInserted{
-        inserted_text: new_text,
-        inserted_at: position
-      }
-    )
+    {_prev_state, new_state} = RoomState.insert(pid, position, new_text)
+    Events.create_event(room.name, event)
+    broadcast(room, event)
 
     %{room | state: new_state}
   end
 
   def delete_text(%Room{pid: pid} = room, text_to_delete) do
-    {_prev_state, new_state} = RoomState.delete(pid, text_to_delete)
+    event = %Events.TextDeleted{
+      deleted_text: text_to_delete
+    }
 
-    broadcast(
-      room,
-      %Events.TextDeleted{
-        deleted_text: text_to_delete
-      }
-    )
+    {_prev_state, new_state} = RoomState.delete(pid, text_to_delete)
+    broadcast(room, event)
 
     %{room | state: new_state}
   end
 
   def replace_text(%Room{pid: pid} = room, substring, replacement_text) do
-    {_prev_state, new_state} = RoomState.replace(pid, substring, replacement_text)
+    event = %Events.TextReplaced{
+      query_text: substring,
+      replaced_with: replacement_text
+    }
 
-    broadcast(
-      room,
-      %Events.TextReplaced{
-        query_text: substring,
-        replaced_with: replacement_text
-      }
-    )
+    {_prev_state, new_state} = RoomState.replace(pid, substring, replacement_text)
+    broadcast(room, event)
 
     %{room | state: new_state}
   end

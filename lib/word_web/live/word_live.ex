@@ -9,6 +9,7 @@ defmodule WordWeb.WordLive do
 
   alias WordWeb.WordForm
   alias Word.Rooms
+  alias Word.Events
 
   on_mount WordWeb.Persona
   on_mount WordWeb.Presence
@@ -27,16 +28,16 @@ defmodule WordWeb.WordLive do
       end
 
       {:ok,
-        socket
-        |> assign(:room, room)
-        |> assign(:mode, :insert)
-        |> assign(:form, to_form(%{}, as: "word"))
-        |> assign(:mode_form, to_form(%{}, as: "mode"))
-        |> assign(:log_length, 0)
-        |> stream_configure(:event_log,
-          dom_id: fn _ -> "log-#{System.unique_integer([:positive, :monotonic])}" end
-        )
-        |> stream(:event_log, [])}
+       socket
+       |> assign(:room, room)
+       |> assign(:mode, :insert)
+       |> assign(:form, to_form(%{}, as: "word"))
+       |> assign(:mode_form, to_form(%{}, as: "mode"))
+       |> assign(:log_length, 0)
+       |> stream_configure(:event_log,
+         dom_id: fn _ -> "log-#{System.unique_integer([:positive, :monotonic])}" end
+       )
+       |> stream(:event_log, Events.list_all_events(name))}
     end
   end
 
@@ -118,7 +119,6 @@ defmodule WordWeb.WordLive do
     {:noreply, socket}
   end
 
-
   attr :stream, :any, required: true
   attr :stream_length, :integer, required: true
   attr :persona, :any, required: true
@@ -152,7 +152,9 @@ defmodule WordWeb.WordLive do
         <div class="flex justify-between flex-1 min-w-0 space-x-4">
           <div>
             <div class="flex flex-row items-center justify-center gap-2">
-              <p class="text-sm font-semibold text-zinc-600"><%= truncate_event_struct(@event.__struct__) %> by</p>
+              <p class="text-sm font-semibold text-zinc-600">
+                <%= truncate_event_struct(@event.__struct__) %> by
+              </p>
               <.tooltip>
                 <div class="z-0 inline-flex w-8 h-8 rounded-full cursor-pointer bg-zinc-50">
                   <span class="flex items-center justify-center w-full h-full text-xl">

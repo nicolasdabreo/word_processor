@@ -11,6 +11,7 @@ defmodule Word.Application do
       WordWeb.Presence
     ]
 
+    Word.Events.init_table()
     opts = [strategy: :one_for_all, name: Word.Supervisor]
     Supervisor.start_link(children, opts)
   end
