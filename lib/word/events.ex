@@ -18,19 +18,29 @@ defmodule Word.Events do
     |> Enum.map(& elem(&1, 1))
   end
 
+  def revert_event(room_name) do
+    records = ETS.lookup(:events, room_name)
+    object = List.last(records)
+    :ok
+  end
+
   defmodule TextInserted do
-    defstruct raw_text: nil, inserted_text: nil, inserted_at: nil
+    defstruct id: nil, raw_text: nil, inserted_text: nil, inserted_at: nil
   end
 
   defmodule TextReplaced do
-    defstruct raw_text: nil, query_text: nil, replaced_with: nil
+    defstruct id: nil, raw_text: nil, query_text: nil, replaced_with: nil
   end
 
   defmodule TextDeleted do
-    defstruct raw_text: nil, deleted_text: nil
+    defstruct id: nil, raw_text: nil, deleted_text: nil
+  end
+
+  defmodule ChangeReverted do
+    defstruct id: nil, event_id: nil, room_name: nil
   end
 
   defmodule RoomCreated do
-    defstruct room_name: nil
+    defstruct id: nil, room_name: nil
   end
 end

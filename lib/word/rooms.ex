@@ -34,6 +34,7 @@ defmodule Word.Rooms do
     {:ok, pid} = RoomManager.start_room(room_name)
 
     broadcast(%Events.RoomCreated{
+      id: unique_id(),
       room_name: room_name
     })
 
@@ -42,6 +43,7 @@ defmodule Word.Rooms do
 
   def insert_text(%Room{pid: pid} = room, position, new_text) do
     event = %Events.TextInserted{
+      id: unique_id(),
       inserted_text: new_text,
       inserted_at: position
     }
@@ -55,6 +57,7 @@ defmodule Word.Rooms do
 
   def delete_text(%Room{pid: pid} = room, text_to_delete) do
     event = %Events.TextDeleted{
+      id: unique_id(),
       deleted_text: text_to_delete
     }
 
@@ -66,6 +69,7 @@ defmodule Word.Rooms do
 
   def replace_text(%Room{pid: pid} = room, substring, replacement_text) do
     event = %Events.TextReplaced{
+      id: unique_id(),
       query_text: substring,
       replaced_with: replacement_text
     }
@@ -76,7 +80,20 @@ defmodule Word.Rooms do
     %{room | state: new_state}
   end
 
+  def revert_last_change(%Room{name: name} = room) do
+    reverted_event = Events.revert_event(name)
+
+    event = %Events.ChangeReverted{
+      room_name: name,
+      event_id: reverted_event
+    }
+
+    broadcast(room, event)
+  end
+
   def search_text(%Room{name: _name}, _search_query) do
     :ok
   end
+
+  defp unique_id, do: System.unique_integer([:positive, :monotonic])
 end

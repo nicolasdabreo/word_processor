@@ -172,7 +172,7 @@ defmodule WordWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
         @variant_class,
         @class,
         ring_classes()

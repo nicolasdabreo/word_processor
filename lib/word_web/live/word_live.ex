@@ -108,6 +108,11 @@ defmodule WordWeb.WordLive do
      |> assign(:mode, String.to_existing_atom(mode))}
   end
 
+  def handle_event("reverse-event", _params, socket) do
+    Rooms.revert_last_change(socket.assigns.room)
+    {:noreply, socket}
+  end
+
   def handle_info({Rooms, event}, socket) do
     {:noreply,
      socket
@@ -170,14 +175,16 @@ defmodule WordWeb.WordLive do
               <%= case truncate_event_struct(@event.__struct__) do %>
                 <% "TextInserted" -> %>
                   "<%= @event.inserted_text %>" inserted
+
                 <% "TextReplaced" -> %>
                   "<%= @event.query_text %>" replaced with "<%= @event.replaced_with %>"
+
                 <% "TextDeleted" -> %>
                   "<%= @event.deleted_text %>" deleted
               <% end %>
             </span>
           </div>
-          <div class="text-sm text-right text-gray-500 whitespace-nowrap">
+          <div class="flex flex-col items-center gap-2 text-sm text-right text-gray-500 whitespace-nowrap">
             <time datetime="2020-09-20">Sep 20</time>
           </div>
         </div>
