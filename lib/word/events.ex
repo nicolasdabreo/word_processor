@@ -15,12 +15,12 @@ defmodule Word.Events do
 
   def list_all_events(room_name) do
     ETS.lookup(:events, room_name)
-    |> Enum.map(& elem(&1, 1))
+    |> Enum.map(&elem(&1, 1))
   end
 
   def revert_event(room_name) do
     records = ETS.lookup(:events, room_name)
-    object = List.last(records)
+    _object = List.last(records)
     :ok
   end
 

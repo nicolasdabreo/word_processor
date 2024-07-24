@@ -175,10 +175,8 @@ defmodule WordWeb.WordLive do
               <%= case truncate_event_struct(@event.__struct__) do %>
                 <% "TextInserted" -> %>
                   "<%= @event.inserted_text %>" inserted
-
                 <% "TextReplaced" -> %>
                   "<%= @event.query_text %>" replaced with "<%= @event.replaced_with %>"
-
                 <% "TextDeleted" -> %>
                   "<%= @event.deleted_text %>" deleted
               <% end %>

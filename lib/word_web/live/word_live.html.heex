@@ -93,6 +93,8 @@
   </div>
 </.simple_form>
 
-<.button class="mb-6" size="sm" disabled variant="outline" phx-click="reverse-event">Undo <.icon name="hero-arrow-left-mini" class="flex-shrink-0 w-3 h-3 ml-1" /></.button>
+<.button class="mb-6" size="sm" disabled variant="outline" phx-click="reverse-event">
+  Undo <.icon name="hero-arrow-left-mini" class="flex-shrink-0 w-3 h-3 ml-1" />
+</.button>
 
 <.event_log stream={@streams.event_log} stream_length={@log_length} persona={@persona} />
